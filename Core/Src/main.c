@@ -44,8 +44,6 @@ uint16_t freq_flag = 0;
 int main(void)
 {
     firststart = 0;
-//    char* redata;
-//    uint16_t len;
     HAL_Init();
     /** 初始化系统时钟为72MHz */
     SystemClock_Config();
@@ -74,19 +72,18 @@ int main(void)
     pid3.actual_val = positiondown_adc_mean;
     pid4.actual_val = positionup_adc_mean;
     set_pid_target3(&pid3, 1618);
-    set_pid_target4(&pid4, 1290);
+    set_pid_target4(&pid4, 1100);
 
     wakeup_motor();
     set_motor3_enable();
     set_motor4_enable();
+
     while (1)
     {
         Key_control();
         Knob_control();
         BLE_control();
         repeat_function();
-        motor5_control();
-        motor_reset();
     }
 }
 

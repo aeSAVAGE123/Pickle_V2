@@ -95,7 +95,7 @@ void Key_control(void)
     /* 扫描KEY1 */
     if( Key_Scan(KEY1_GPIO_PORT, KEY1_PIN) == KEY_ON)
     {
-        LED5_TOGGLE
+        LED3_TOGGLE
         if(speedflag == 1)
         {
             speedflag = 0;
@@ -146,6 +146,7 @@ void Key_control(void)
     /* 扫描KEY4 */
     if( Key_Scan(KEY4_GPIO_PORT, KEY4_PIN) == KEY_ON)
     {
+        LED4_TOGGLE
         char* redata1;       //定义读数据的指针
         uint16_t len;       //定义数据大小
         if (IS_BLE_CONNECTED()) // 判断INT引脚电平是否发生变化
@@ -266,7 +267,7 @@ void Knob_control(void)
         {
             if(upcnt2 == 1)
             {
-                set_pid_target4(&pid4,1050);
+                set_pid_target4(&pid4,750);
                 upcnt2 = 0;
             }
         } else
@@ -277,7 +278,7 @@ void Knob_control(void)
         {
             if(upcnt3 == 1)
             {
-                set_pid_target4(&pid4,1400);
+                set_pid_target4(&pid4,800);
                 upcnt3 = 0;
             }
         } else
@@ -288,7 +289,7 @@ void Knob_control(void)
         {
             if(upcnt4 == 1)
             {
-                set_pid_target4(&pid4,1750);
+                set_pid_target4(&pid4,900);
                 upcnt4 = 0;
             }
         } else
@@ -299,7 +300,7 @@ void Knob_control(void)
         {
             if(upcnt5 == 1)
             {
-                set_pid_target4(&pid4,2100);
+                set_pid_target4(&pid4,1000);
                 upcnt5 = 0;
             }
         } else

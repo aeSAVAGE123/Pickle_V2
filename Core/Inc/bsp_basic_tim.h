@@ -13,7 +13,7 @@
 //当定时器从0计数到BASIC_PERIOD_COUNT-1，即为BASIC_PERIOD_COUNT次，为一个定时周期
 
 //PID计算周期:20ms计算一次--频率50Hz
-#define BASIC_PERIOD_MS    (10)//20ms
+#define BASIC_PERIOD_MS    (10)//10ms
 
 #define BASIC_PERIOD_COUNT    (BASIC_PERIOD_MS*100)
 
@@ -21,7 +21,7 @@
 //				如果APB1_CLK = 72MHz = TIMxCLK
 //				否则TIMxCLK=APB1_CLK * 2
 // 设定定时器频率为=TIMxCLK/(TIM_Prescaler+1)=1MHz
-#define BASIC_PRESCALER_COUNT   (720)//100Khz
+#define BASIC_PRESCALER_COUNT   (720)                   //100hz
 
 /* 获取定时器的周期，单位ms */
 //#define __HAL_TIM_GET_PRESCALER(__HANDLE__)      ((__HANDLE__)->Instance->PSC)    // Get TIM Prescaler.

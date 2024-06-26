@@ -22,6 +22,15 @@ typedef struct
     char speed_str[5];        // M5 电机速度
 } Command;
 
+
+typedef struct
+{
+    float horizontal;//仰角pid4
+    float vertical;//水平摆角pid3
+    float M1speed;
+    float M2speed;
+} Position;
+
 /* 设置速度（占空比） */
 #define MOTOR1_SET_FWD_COMPAER(ChannelPulse)     TIM1_SetPWM_pulse(TIM_CHANNEL_1,ChannelPulse)    // 设置比较寄存器的值
 #define MOTOR1_SET_REV_COMPAER(ChannelPulse)     TIM1_SetPWM_pulse(TIM_CHANNEL_1,ChannelPulse)    // 设置比较寄存器的值
@@ -140,7 +149,7 @@ void BLE_control(void);
 void parse_command(const char* data);
 void execute_command(const Command* cmd);
 
-void motor1_motor2_motor3_motor4_control(void);
+void motor1_motor2_motor3_motor4_control(Position selected_position);
 void Fixed_control(void);
 void random_control(void);
 
