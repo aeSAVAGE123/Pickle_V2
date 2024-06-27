@@ -155,8 +155,8 @@ void random_control(void);
 
 int Fixed_chose(char *positions);
 int freq_chose(const char *speed_str);
+void random_chose(char *positions);
 
-void freq_function(void);
 void repeat_function(void);
 
 #endif

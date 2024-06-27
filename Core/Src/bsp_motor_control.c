@@ -34,6 +34,7 @@ unsigned int Task_Delay[NumOfTask];
 char linebuff[1024];
 
 uint16_t sensor_triggered = 0;
+uint16_t M5_done = 0;
 
 int  currentSelectPosition = -1;
 int  currentSelectrepeat_count = -1;
@@ -557,7 +558,6 @@ void parse_command(const char* data)  //把接收到的蓝牙数据进行解析
 
     if(strcmp(temp_data, "8") == 0)
     {
-//        motor5_flag = 1;
         motor5_control();
     }
     else if(strcmp(temp_data, "9") == 0)
@@ -600,13 +600,15 @@ void parse_command(const char* data)  //把接收到的蓝牙数据进行解析
     }
 }
 
+// 定义全局变量
+char current_random_positions[20]; // 假设最大长度为20，根据需要调整大小
+
 void execute_command(const Command* cmd)
 {
     int speed_value = freq_chose(cmd->speed_str);    //设置频率
     if (speed_value > 0)
     {
         currentSelectmotor5_speed = speed_value;
-        LED4_TOGGLE
     }
     switch (cmd->mode)                  //区分模式
     {
@@ -618,45 +620,7 @@ void execute_command(const Command* cmd)
         case '2':
             //随机模式
             mode_select = 2;
-            if (strcmp(cmd->positions, "AA") == 0)
-            {
-                if (all_random_flag == 1)
-                {
-                    all_random_flag = 0;
-                    set_motor5_disable();
-                }
-                else
-                {
-                    all_random_flag = 1;
-                    LED4_TOGGLE;
-                }
-            }
-            else if (strcmp(cmd->positions, "BB") == 0)
-            {
-                if (left_random_flag == 1)
-                {
-                    left_random_flag = 0;
-                    set_motor5_disable();
-                }
-                else
-                {
-                    left_random_flag = 1;
-                    LED4_TOGGLE;
-                }
-            }
-            else if (strcmp(cmd->positions, "CC") == 0)
-            {
-                if (right_random_flag == 1)
-                {
-                    right_random_flag = 0;
-                    set_motor5_disable();
-                }
-                else
-                {
-                    right_random_flag = 1;
-                    LED4_TOGGLE;
-                }
-            }
+            strcpy(current_random_positions, cmd->positions); // 更新 current_positions
             break;
         case '3':
             // 水平模式
@@ -668,13 +632,13 @@ void execute_command(const Command* cmd)
     if (cmd->current_repeat_count > 0)
     {
         currentSelectrepeat_count = cmd->current_repeat_count;
-        LED3_TOGGLE
+        motor5_current_count = currentSelectrepeat_count;
         repeat_flag = 1;
     }
     new_data_flag = 1;                  // 设置新数据标志位，表示更新数据
 }
 
-int Fixed_chose(char *positions)       //根据second_char的判断，返回对应的值，作为数组的信号，确定对应的点位
+int Fixed_chose(char *positions)       //根据positions的判断，返回对应的值，作为数组的信号，确定对应的点位
 {
     if (strcmp(positions, "A1") == 0)
     {
@@ -782,31 +746,51 @@ int Fixed_chose(char *positions)       //根据second_char的判断，返回对�
     }
 }
 
+Position selected_random_position;
+
+void random_chose(char *positions)          //根据positions的判断，返回对应的值，作为数组的信号，确定对应的随机点位
+{
+    int index;
+    if (strcmp(positions, "AA") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        index = generate_random_all_position(); // 获取随机位置索引
+        selected_random_position = all_positions[index]; // 获取选定的位置数据
+    }
+    else if (strcmp(positions, "BB") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        index = generate_random_left_position(); // 获取随机位置索引
+        selected_random_position = left_positions[index]; // 获取选定的位置数据
+    }
+    else if (strcmp(positions, "CC") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        index = generate_random_right_position(); // 获取随机位置索引
+        selected_random_position = right_positions[index]; // 获取选定的位置数据
+    }
+}
+
 int freq_chose(const char *speed_str)
 {
     if (strcmp(speed_str, "01")== 0)
     {
-        LED5_TOGGLE;
         return 3500;
     }
     if (strcmp(speed_str, "02")== 0)
     {
-        LED5_TOGGLE;
         return 4000;
     }
     if (strcmp(speed_str, "03")== 0)
     {
-        LED5_TOGGLE;
         return 4500;
     }
     if (strcmp(speed_str, "04")== 0)
     {
-        LED5_TOGGLE;
         return 5000;
     }
     if (strcmp(speed_str, "05")== 0)
     {
-        LED5_TOGGLE;
         return 5500;
     }
     return -1;  // 默认值，如果未匹配任何已知速度
@@ -840,10 +824,10 @@ void Fixed_control(void)
             break;
 
         case 1:
+            LED3_TOGGLE
             // 等待一段时间以确保发球机移动到位
             if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
             {
-                last_tick = HAL_GetTick();  // 更新时间戳
                 fixed_control_state = 2;
             }
             break;
@@ -868,6 +852,43 @@ void Fixed_control(void)
     }
 }
 
+void random_control(void)
+{
+    static uint32_t last_tick = 0;
+    switch (random_state)
+    {
+        case 0:
+            random_chose(current_random_positions);
+            motor1_motor2_motor3_motor4_control(selected_random_position);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            random_state = 1;
+            break;
+
+        case 1:
+            if (HAL_GetTick() - last_tick >= 3000)                  // 等待电机转动
+            {
+                random_state = 2;
+            }
+            break;
+
+        case 2:
+            if (Dropping_adc_mean < 400)
+            {
+                // 关闭电机5
+                set_motor5_disable();
+                sensor_triggered = 1;
+
+                // 处理重复次数
+//                if (motor5_current_count  > 0)
+//                {
+//                    motor5_current_count--; // 减少当前循环次数
+                    random_state = 0;  // 重置状态机
+//                }
+            }
+            break;
+    }
+}
+
 void repeat_function(void)
 {
     //每次进入函数，首先检查 new_data_flag 标志位
@@ -876,26 +897,14 @@ void repeat_function(void)
         set_motor5_disable();
         repeat_state = REPEAT_IDLE;                 //重置状态机
         fixed_control_state = 0;                    //重置Fixed_control状态机
+        random_state = 0;                           //重置random_control状态机
         loop_count = 1;                             //初始化重复计数器
         new_data_flag = 0;                          //清除新数据标志位
     }
     switch (repeat_state)
     {
         case REPEAT_IDLE:
-            switch (mode_select)
-            {
-                case 1:
-                    Fixed_control();
-                    break;
-                case 2:
-                    random_control();
-                    break;
-            }
-            if (repeat_flag == 1)
-            {
-                repeat_flag = 0;                        // 立即清除标志位，避免重复进入这个状态
-                repeat_state = REPEAT_RUNNING;          //准备进入下一状态
-            }
+            repeat_state = REPEAT_RUNNING;          //准备进入下一状态
             break;
 
         case REPEAT_RUNNING:
@@ -904,7 +913,21 @@ void repeat_function(void)
 
         case REPEAT_WAITING_SENSOR:
             repeat_count_comparison_value = currentSelectrepeat_count;      //传递需要循环的次数
-                                                              //运行不同模式
+            switch (mode_select)
+            {
+                case 1:
+                    Fixed_control();            //定点模式
+                    break;
+                case 2:
+                    random_control();           //随机模式
+                    break;
+            }
+            if (M5_done == 1)
+            {
+                M5_done = 0;
+                HAL_Delay(3000);
+                set_motor5_enable();
+            }
             if (sensor_triggered == 1)                                      //表示传感器已经触发
             {
                 sensor_triggered = 0;                                       //表示尚未触发传感器
@@ -915,65 +938,9 @@ void repeat_function(void)
                 else
                 {
                     loop_count++;                                            //将计数器自增1
+                    M5_done = 1;
                     repeat_state = REPEAT_RUNNING;                          //未达到返回上一状态再循环
-                    if (motor5_current_count > 0)
-                    {
-                        HAL_Delay(3000);
-                        set_motor5_enable();
-                    }
                 }
-            }
-            break;
-    }
-}
-
-void random_control(void)
-{
-    static uint32_t last_tick = 0;
-    static Position selected_position;
-    switch (random_state)
-    {
-        case 0:
-            if(1 == all_random_flag)
-            {
-                srand(HAL_GetTick()); // 初始化随机数发生器
-                int index = generate_random_all_position(); // 获取随机位置索引
-                selected_position = all_positions[index]; // 获取选定的位置数据
-            }
-            //随机模式：左半场
-            if(1 == left_random_flag)
-            {
-                srand(HAL_GetTick()); // 初始化随机数发生器
-                int index = generate_random_left_position(); // 获取随机位置索引
-                selected_position = left_positions[index]; // 获取选定的位置数据
-            }
-            //随机模式：右半场
-            if(1 == right_random_flag)
-            {
-                srand(HAL_GetTick()); // 初始化随机数发生器
-                int index = generate_random_right_position(); // 获取随机位置索引
-                selected_position = right_positions[index]; // 获取选定的位置数据
-            }
-            random_state = 1;
-            break;
-        case 1:
-            motor1_motor2_motor3_motor4_control(selected_position);
-            last_tick = HAL_GetTick();  // 获取当前时间戳
-            random_state = 2;
-            break;
-        case 2:
-            if (HAL_GetTick() - last_tick >= 1000)                  // 等待电机转动
-            {
-                random_state = 3;
-            }
-            break;
-        case 3:
-            if (Dropping_adc_mean < 400)
-            {
-                // 关闭电机5
-                set_motor5_disable();
-                sensor_triggered = 1;
-                random_state = 0;
             }
             break;
     }
@@ -993,7 +960,7 @@ void motor_reset(void)
 void motor5_control(void)
 {
     LED5_TOGGLE
-    motor5_current_count = currentSelectrepeat_count;
+//    motor5_current_count = currentSelectrepeat_count;
     if (!is_motor5_en) // 当 is_motor5_en 为 0（假）时，这里的代码将会执行
     {
         set_motor5_direction(MOTOR_REV);
