@@ -156,9 +156,18 @@ void vertical_control(void);
 void cross_control(void);
 void custom_control(void);
 
+void receive_control(void);
+void drop_shot_control(void);
+void volley_control(void);
+void lob_control(void);
+void smash_control(void);
+
 int Fixed_chose(char *positions);
 int freq_chose(const char *speed_str);
 void random_chose(char *positions);
+void receive_chose(char *positions);
+void lob_chose(char *positions);
+void smash_chose(char *positions);
 
 void repeat_function(void);
 

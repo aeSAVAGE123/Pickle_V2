@@ -61,6 +61,12 @@ uint8_t vertical_state = 0;
 uint8_t cross_state = 0;
 uint8_t custom_state = 0;
 
+uint8_t receive_state = 0;
+uint8_t drop_shot_state = 0;
+uint8_t volley_state = 0;
+uint8_t lob_state = 0;
+uint8_t smash_state = 0;
+
 int reset_flag = 0;
 int mode_select = 0;//辨别执行哪个模式
 
@@ -75,7 +81,7 @@ RepeatState repeat_state = REPEAT_IDLE;             //初始化状态机
 int loop_count = 0;
 int repeat_count_comparison_value = 0;
 int motor5_current_count = 0;
-
+//随机模式数组
 Position all_positions[25] =
         {
                 {1100,2500,1600,1600},{1100,2250,1800,1800}, {1100,2100,2050,2050},{1100,2100,2150,2150},{1100,1920,2270,2270},//A1-E1
@@ -89,8 +95,7 @@ Position all_positions[25] =
                 {1100,800,1550,1550},{1100,789,1800,1800},{1100,1000,2000,2000},{1100,1200,2150,2150},{1100, 800,2270,2270}//A5-E5
 
         };
-
-Position left_positions[15] =
+Position right_positions[15] =
         {
                 {1100,2500,1600,1600},{1100,2250,1800,1800}, {1100,2100,2050,2050},{1100,2100,2150,2150},{1100,1920,2270,2270},//A1-E1
 
@@ -99,7 +104,7 @@ Position left_positions[15] =
                 {1100,1738,1550,1550},{1100, 1591,1800,1800},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
         };
 
-Position right_positions[15] =
+Position left_positions[15] =
         {
                 {1100,1738,1550,1550},{1100, 1591,1800,1800},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
 
@@ -107,18 +112,93 @@ Position right_positions[15] =
 
                 {1100,800,1550,1550},{1100,789,1800,1800},{1100,1000,2000,2000},{1100,1200,2150,2150},{1100, 800,2270,2270}//A5-E5
         };
+//接发球模式数组
+Position receive_right_positions[6] =
+        {
+                {1100, 2100, 2150, 2150},{1100, 1920, 2270, 2270},//D1-E1
 
-// 函数来生成指定范围内的随机数
+                {1100, 1780, 2150, 2150},{1100, 1720, 2270, 2270},//D2-E2
+
+                {1100, 1530, 2150, 2150},{1100, 1560, 2270, 2270}, //D3-E3
+
+        };
+
+Position receive_left_positions[6] =
+        {
+
+                {1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //D3-E3
+
+                {1100, 1300,2150,2150}, {1100, 1230,2270,2270},//D4-E4
+
+                {1100,1200,2150,2150},{1100, 800,2270,2270}//D5-E5
+        };
+//高吊球模式数组
+Position lob_all_positions[5] =
+        {
+                {1100,1920,2270,2270}, {1100,1720,2270,2270}, {1100, 1560,2270,2270}, {1100, 1230,2270,2270}, {1100, 800,2270,2270}//E1-E5
+        };
+Position lob_right_positions[3] =
+        {
+                {1100,1920,2270,2270}, {1100,1720,2270,2270}, {1100, 1560,2270,2270},//E1-E3
+        };
+
+Position lob_left_positions[3] =
+        {
+                {1100, 1560,2270,2270}, {1100, 1230,2270,2270}, {1100, 800,2270,2270}//E3-E5
+        };
+//扣杀球模式数组
+Position smash_all_positions[5] =
+        {
+                {1100,2100,2050,2050},{1100,1750,2050,2050},{1100, 1580,2000,2000},{1100, 1200,2000,2000},{1100,1000,2000,2000},//C1-C5
+        };
+Position smash_right_positions[3] =
+        {
+                {1100,2100,2050,2050},{1100,1750,2050,2050},{1100, 1580,2000,2000},//C1-C3
+        };
+Position smash_left_positions[3] =
+        {
+                {1100, 1580,2000,2000},{1100, 1200,2000,2000},{1100,1000,2000,2000},//C3-C5
+        };
+
+// 随机模式中函数来生成指定范围内的随机数
 int generate_random_all_position(void) {
     return rand() % 25; // 返回0到24之间的随机数
 }
-
 int generate_random_left_position(void) {
     return rand() % 15; // 返回0到15之间的随机数
 }
-
 int generate_random_right_position(void) {
     return rand() % 15; // 返回0到15之间的随机数
+}
+
+// 接发球模式中函数来生成指定范围内的随机数
+int generate_random_receive_left_position(void) {
+    return rand() % 6;
+}
+int generate_random_receive_right_position(void) {
+    return rand() % 6;
+}
+
+// 高吊球模式中函数来生成指定范围内的随机数
+int generate_random_lob_all_position(void) {
+    return rand() % 5;
+}
+int generate_random_lob_left_position(void) {
+    return rand() % 3;
+}
+int generate_random_lob_right_position(void) {
+    return rand() % 3;
+}
+
+// 扣杀球模式中函数来生成指定范围内的随机数
+int generate_random_smash_all_position(void) {
+    return rand() % 5;
+}
+int generate_random_smash_left_position(void) {
+    return rand() % 3;
+}
+int generate_random_smash_right_position(void) {
+    return rand() % 3;
 }
 
 void wakeup_motor(void)
@@ -619,6 +699,10 @@ void parse_command(const char* data)  //把接收到的蓝牙数据进行解析
 
 // 定义全局变量
 char current_random_positions[20];                  // 假设最大长度为20，根据需要调整大小
+char current_receive_positions[20];
+char current_lob_positions[20];
+char current_smash_positions[20];
+
 
 void execute_command(const Command* cmd)
 {
@@ -673,6 +757,32 @@ void execute_command(const Command* cmd)
             currentSelectPosition4 = Fixed_chose(current_pos.positions4);
             currentSelectPosition5 = Fixed_chose(current_pos.positions5);
             break;
+        case '7':
+            //接发球模式
+            mode_select = 7;
+            strcpy(current_receive_positions, cmd->positions);
+            break;
+        case '8':
+            // 丁克球模式
+            currentSelectPosition = Fixed_chose(cmd->positions);
+            mode_select = 8;
+            break;
+        case '9':
+            // 截击球模式
+            currentSelectPosition = Fixed_chose(cmd->positions);
+            mode_select = 9;
+            break;
+        case '10':
+            //高吊球模式
+            mode_select = 10;
+            strcpy(current_lob_positions, cmd->positions);
+            break;
+        case '11':
+            //扣杀球
+            mode_select = 11;
+            strcpy(current_smash_positions, cmd->positions);
+            break;
+            // 其他模式逻辑...
     }
 
     // 设置循环次数
@@ -852,6 +962,9 @@ int Fixed_chose(char *positions)       //根据positions的判断，返回对应
 }
 
 Position selected_random_position;
+Position selected_receive_position;
+Position selected_lob_position;
+Position selected_smash_position;
 
 void random_chose(char *positions)          //根据positions的判断，返回对应的值，作为数组的信号，确定对应的随机点位
 {
@@ -873,6 +986,69 @@ void random_chose(char *positions)          //根据positions的判断，返回�
         srand(HAL_GetTick()); // 初始化随机数发生器
         index = generate_random_right_position(); // 获取随机位置索引
         selected_random_position = right_positions[index]; // 获取选定的位置数据
+    }
+}
+
+void receive_chose(char *positions)          //根据positions的判断，返回对应的值，作为数组的信号，确定对应的随机点位
+{
+    int receive_index;
+    if (strcmp(positions, "AA") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        receive_index = generate_random_receive_left_position(); // 获取随机位置索引
+        selected_receive_position = receive_left_positions[receive_index]; // 获取选定的位置数据
+    }
+    else if (strcmp(positions, "BB") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        receive_index = generate_random_receive_right_position(); // 获取随机位置索引
+        selected_receive_position = receive_right_positions[receive_index]; // 获取选定的位置数据
+    }
+}
+
+void lob_chose(char *positions)          //根据positions的判断，返回对应的值，作为数组的信号，确定对应的随机点位
+{
+    int index;
+    if (strcmp(positions, "AA") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        index = generate_random_lob_all_position(); // 获取随机位置索引
+        selected_lob_position = lob_all_positions[index]; // 获取选定的位置数据
+    }
+    else if (strcmp(positions, "BB") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        index = generate_random_lob_left_position(); // 获取随机位置索引
+        selected_lob_position = lob_left_positions[index]; // 获取选定的位置数据
+    }
+    else if (strcmp(positions, "CC") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        index = generate_random_lob_right_position(); // 获取随机位置索引
+        selected_lob_position = lob_right_positions[index]; // 获取选定的位置数据
+    }
+}
+
+void smash_chose(char *positions)          //根据positions的判断，返回对应的值，作为数组的信号，确定对应的随机点位
+{
+    int index;
+    if (strcmp(positions, "AA") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        index = generate_random_smash_all_position(); // 获取随机位置索引
+        selected_smash_position = smash_all_positions[index]; // 获取选定的位置数据
+    }
+    else if (strcmp(positions, "BB") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        index = generate_random_smash_left_position(); // 获取随机位置索引
+        selected_smash_position = smash_left_positions[index]; // 获取选定的位置数据
+    }
+    else if (strcmp(positions, "CC") == 0)
+    {
+        srand(HAL_GetTick()); // 初始化随机数发生器
+        index = generate_random_smash_right_position(); // 获取随机位置索引
+        selected_smash_position = smash_right_positions[index]; // 获取选定的位置数据
     }
 }
 
@@ -1411,6 +1587,205 @@ void custom_control(void)
     }
 }
 
+void receive_control(void)
+{
+    static uint32_t last_tick = 0;
+    switch (receive_state)
+    {
+        case 0:
+            receive_chose(current_receive_positions);
+            motor1_motor2_motor3_motor4_control(selected_receive_position);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            receive_state = 1;
+            break;
+
+        case 1:
+            if (HAL_GetTick() - last_tick >= 3000)                  // 等待电机转动
+            {
+                receive_state = 2;
+            }
+            break;
+
+        case 2:
+            if (Dropping_adc_mean < 400)
+            {
+                // 关闭电机5
+                HAL_Delay(200);
+                set_motor5_disable();
+                sensor_triggered = 1;
+                // 处理重复次数
+                if (motor5_current_count  > 0)
+                {
+                    motor5_current_count--; // 减少当前循环次数
+                    receive_state = 0;  // 重置状态机
+                }
+            }
+            break;
+    }
+}
+
+void drop_shot_control(void)
+{
+    static uint32_t last_tick = 0;
+    static Position selected_position;
+    switch (drop_shot_state)
+    {
+        case 0:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position = all_positions[currentSelectPosition];
+            motor1_motor2_motor3_motor4_control(selected_position);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            drop_shot_state = 1;
+            break;
+
+        case 1:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                drop_shot_state = 2;
+            }
+            break;
+
+        case 2:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 400)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_triggered = 1;
+                // 处理重复次数
+                if (motor5_current_count  > 0)
+                {
+                    motor5_current_count--; // 减少当前循环次数
+                }
+                if (motor5_current_count == 0) // 检查是否达到预定的循环次数
+                {
+                    drop_shot_state = 0;  // 重置状态机
+                }
+            }
+            break;
+    }
+}
+
+void volley_control(void)
+{
+    static uint32_t last_tick = 0;
+    static Position selected_position;
+    switch (volley_state)
+    {
+        case 0:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position = all_positions[currentSelectPosition];
+            motor1_motor2_motor3_motor4_control(selected_position);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            volley_state = 1;
+            break;
+
+        case 1:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                volley_state = 2;
+            }
+            break;
+
+        case 2:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 400)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_triggered = 1;
+                // 处理重复次数
+                if (motor5_current_count  > 0)
+                {
+                    motor5_current_count--; // 减少当前循环次数
+                }
+                if (motor5_current_count == 0) // 检查是否达到预定的循环次数
+                {
+                    volley_state = 0;  // 重置状态机
+                }
+            }
+            break;
+    }
+}
+
+void lob_control(void)
+{
+    static uint32_t last_tick = 0;
+    switch (lob_state)
+    {
+        case 0:
+            lob_chose(current_lob_positions);
+            motor1_motor2_motor3_motor4_control(selected_lob_position);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            lob_state = 1;
+            break;
+
+        case 1:
+            if (HAL_GetTick() - last_tick >= 3000)                  // 等待电机转动
+            {
+                lob_state = 2;
+            }
+            break;
+
+        case 2:
+            if (Dropping_adc_mean < 400)
+            {
+                // 关闭电机5
+                HAL_Delay(200);
+                set_motor5_disable();
+                sensor_triggered = 1;
+
+                // 处理重复次数
+                if (motor5_current_count  > 0)
+                {
+                    motor5_current_count--; // 减少当前循环次数
+                    lob_state = 0;  // 重置状态机
+                }
+            }
+            break;
+    }
+}
+
+void smash_control(void)
+{
+    static uint32_t last_tick = 0;
+    switch (smash_state)
+    {
+        case 0:
+            smash_chose(current_smash_positions);
+            motor1_motor2_motor3_motor4_control(selected_smash_position);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            smash_state = 1;
+            break;
+
+        case 1:
+            if (HAL_GetTick() - last_tick >= 3000)                  // 等待电机转动
+            {
+                smash_state = 2;
+            }
+            break;
+
+        case 2:
+            if (Dropping_adc_mean < 400)
+            {
+                // 关闭电机5
+                HAL_Delay(200);
+                set_motor5_disable();
+                sensor_triggered = 1;
+
+                // 处理重复次数
+                if (motor5_current_count  > 0)
+                {
+                    motor5_current_count--; // 减少当前循环次数
+                    smash_state = 0;  // 重置状态机
+                }
+            }
+            break;
+    }
+}
+
 void repeat_function(void)
 {
     //每次进入函数，首先检查 new_data_flag 标志位
@@ -1424,6 +1799,11 @@ void repeat_function(void)
         vertical_state = 0;                         //重置vertical_control状态机
         cross_state = 0;                            //重置cross_control状态机
         custom_state = 0;                           //重置custom_control状态机
+        receive_state = 0;                          //重置receive_control状态机
+        drop_shot_state = 0;                        //重置drop_shot_control状态机
+        volley_state = 0;                           //重置volley_control状态机
+        lob_state = 0;                              //重置lob_control状态机
+        smash_state = 0;                            //重置smash_control状态机
         loop_count = 1;                             //初始化重复计数器
         new_data_flag = 0;                          //清除新数据标志位
     }
@@ -1458,6 +1838,21 @@ void repeat_function(void)
                     break;
                 case 6:
                     custom_control();           //自定义模式
+                    break;
+                case 7:
+                    receive_control();           //接发球模式
+                    break;
+                case 8:
+                    drop_shot_control();         //丁克球模式
+                    break;
+                case 9:
+                    volley_control();            //截击球模式
+                    break;
+                case 10:
+                    lob_control();              //高吊球模式
+                    break;
+                case 11:
+                    smash_control();            //扣杀球模式
                     break;
             }
             if (M5_done == 1)
@@ -1529,6 +1924,6 @@ void motor5_control(void)
     }
     else
     {
-        set_motor5_disable(); // 停止电机
+        set_motor5_disable();                           // 停止电机
     }
 }
