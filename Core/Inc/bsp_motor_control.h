@@ -22,11 +22,19 @@ typedef struct
     char speed_str[5];        // M5 电机速度
 } Command;
 
+// 定义 CurrentPosition 结构体(水平模式、垂直模式、交叉模式、自定义模式)
+typedef struct {
+    char positions1[3];
+    char positions2[3];
+    char positions3[3];
+    char positions4[3];
+    char positions5[3];
+} CurrentPosition;
 
 typedef struct
 {
-    float horizontal;//仰角pid4
-    float vertical;//水平摆角pid3
+    float vertical;         //仰角pid4
+    float horizontal;       //水平摆角pid3
     float M1speed;
     float M2speed;
 } Position;
@@ -133,25 +141,20 @@ void wakeup_motor(void);
 void sleep_motor(void);
 void motor_reset(void);
 
-void upward_control(void);
-void downward_control(void);
-void left_control(void);
-void right_control(void);
-
-void motor1_motor2_control(void);
-void motor1_motor2_speedup(void);
-void motor1_motor2_slowdown(void);
-
 void motor5_control(void);
 
-void motor_reset(void);
 void BLE_control(void);
 void parse_command(const char* data);
 void execute_command(const Command* cmd);
+void split_positions(const char* source, CurrentPosition* pos);
 
 void motor1_motor2_motor3_motor4_control(Position selected_position);
 void Fixed_control(void);
 void random_control(void);
+void horizontal_control(void);
+void vertical_control(void);
+void cross_control(void);
+void custom_control(void);
 
 int Fixed_chose(char *positions);
 int freq_chose(const char *speed_str);

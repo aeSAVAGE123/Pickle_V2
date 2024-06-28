@@ -34,16 +34,33 @@ unsigned int Task_Delay[NumOfTask];
 char linebuff[1024];
 
 uint16_t sensor_triggered = 0;
+uint16_t sensor_first_triggered = 0;
+uint16_t sensor_second_triggered = 0;
+uint16_t sensor_third_triggered = 0;
+uint16_t sensor_forth_triggered = 0;
+
 uint16_t M5_done = 0;
 
 int  currentSelectPosition = -1;
 int  currentSelectrepeat_count = -1;
 
+int  currentSelectPosition1 = -1;
+int  currentSelectPosition2 = -1;
+int  currentSelectPosition3 = -1;
+int  currentSelectPosition4 = -1;
+int  currentSelectPosition5 = -1;
+
 int currentSelectmotor5_speed = 3000;
 
 volatile int new_data_flag = 0; // 标志位，表示有新数据
+
 uint8_t fixed_control_state = 0;
 uint8_t random_state = 0;
+uint8_t horizontal_state = 0;
+uint8_t vertical_state = 0;
+uint8_t cross_state = 0;
+uint8_t custom_state = 0;
+
 int reset_flag = 0;
 int mode_select = 0;//辨别执行哪个模式
 
@@ -61,34 +78,34 @@ int motor5_current_count = 0;
 
 Position all_positions[25] =
         {
-                {1100,2500,2000,2000},{1100,2250,2000,2000}, {1100,2100,2000,2000},{1100,2100,2000,2000},{1100,1920,2000,2000},//A1-E1
+                {1100,2500,1600,1600},{1100,2250,1800,1800}, {1100,2100,2050,2050},{1100,2100,2150,2150},{1100,1920,2270,2270},//A1-E1
 
-                {1100,1900,2000,2000},{1100, 1900,2000,2000},{1100,1750,2000,2000},{1100,1780,2000,2000},{1100,1720,2000,2000},//A2-E2
+                {1100,1900,1600,1600},{1100, 1900,1800,1800},{1100,1750,2050,2050},{1100,1780,2150,2150},{1100,1720,2270,2270},//A2-E2
 
-                {1100,1738,2000,2000},{1100, 1591,2000,2000},{1100, 1580,2000,2000},{1100, 1530,2000,2000}, {1100, 1560,2000,2000}, //A3-E3
+                {1100,1738,1550,1550},{1100, 1591,1800,1800},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
 
-                {1100, 1290,2000,2000}, {1100,745,2000,2000}, {1100, 1200,2000,2000}, {1100, 1300,2000,2000}, {1100, 1230,2000,2000},//A4-E4
+                {1100, 1290,1550,1550}, {1100,745,1800,1800}, {1100, 1200,2000,2000}, {1100, 1300,2150,2150}, {1100, 1230,2270,2270},//A4-E4
 
-                {1100,800,2000,2000},{1100,789,2000,2000},{1100,1000,2000,2000},{1100,1200,2000,2000},{1100, 800,2000,2000}//A5-E5
+                {1100,800,1550,1550},{1100,789,1800,1800},{1100,1000,2000,2000},{1100,1200,2150,2150},{1100, 800,2270,2270}//A5-E5
 
         };
 
 Position left_positions[15] =
         {
-                {1100,2500,2000,2000},{1100,2250,2000,2000}, {1100,2100,2000,2000},{1100,2100,2000,2000},{1100,1920,2000,2000},//A1-E1
+                {1100,2500,1600,1600},{1100,2250,1800,1800}, {1100,2100,2050,2050},{1100,2100,2150,2150},{1100,1920,2270,2270},//A1-E1
 
-                {1100,1900,2000,2000},{1100, 1900,2000,2000},{1100,1750,2000,2000},{1100,1780,2000,2000},{1100,1720,2000,2000},//A2-E2
+                {1100,1900,1600,1600},{1100, 1900,1800,1800},{1100,1750,2050,2050},{1100,1780,2150,2150},{1100,1720,2270,2270},//A2-E2
 
-                {1100,1738,2000,2000},{1100, 1591,2000,2000},{1100, 1580,2000,2000},{1100, 1530,2000,2000}, {1100, 1560,2000,2000}, //A3-E3
+                {1100,1738,1550,1550},{1100, 1591,1800,1800},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
         };
 
 Position right_positions[15] =
         {
-                {1100,1738,2000,2000},{1100, 1591,2000,2000},{1100, 1580,2000,2000},{1100, 1530,2000,2000}, {1100, 1560,2000,2000}, //A3-E3
+                {1100,1738,1550,1550},{1100, 1591,1800,1800},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
 
-                {1100, 1290,2000,2000}, {1100,745,2000,2000}, {1100, 1200,2000,2000}, {1100, 1300,2000,2000}, {1100, 1230,2000,2000},//A4-E4
+                {1100, 1290,1550,1550}, {1100,745,1800,1800}, {1100, 1200,2000,2000}, {1100, 1300,2150,2150}, {1100, 1230,2270,2270},//A4-E4
 
-                {1100,800,2000,2000},{1100,789,2000,2000},{1100,1000,2000,2000},{1100,1200,2000,2000},{1100, 800,2000,2000}//A5-E5
+                {1100,800,1550,1550},{1100,789,1800,1800},{1100,1000,2000,2000},{1100,1200,2150,2150},{1100, 800,2270,2270}//A5-E5
         };
 
 // 函数来生成指定范围内的随机数
@@ -97,11 +114,11 @@ int generate_random_all_position(void) {
 }
 
 int generate_random_left_position(void) {
-    return rand() % 15; // 返回0到24之间的随机数
+    return rand() % 15; // 返回0到15之间的随机数
 }
 
 int generate_random_right_position(void) {
-    return rand() % 15; // 返回0到24之间的随机数
+    return rand() % 15; // 返回0到15之间的随机数
 }
 
 void wakeup_motor(void)
@@ -601,33 +618,63 @@ void parse_command(const char* data)  //把接收到的蓝牙数据进行解析
 }
 
 // 定义全局变量
-char current_random_positions[20]; // 假设最大长度为20，根据需要调整大小
+char current_random_positions[20];                  // 假设最大长度为20，根据需要调整大小
 
 void execute_command(const Command* cmd)
 {
+    CurrentPosition current_pos = {0};
+
     int speed_value = freq_chose(cmd->speed_str);    //设置频率
     if (speed_value > 0)
     {
         currentSelectmotor5_speed = speed_value;
     }
+
     switch (cmd->mode)                  //区分模式
     {
         case '1':
             // 定点模式
-            currentSelectPosition = Fixed_chose(cmd->positions); // 假设有个 Fixed_chose 函数处理位点选择
             mode_select = 1;
+            currentSelectPosition = Fixed_chose(cmd->positions);        // 假设有个 Fixed_chose 函数处理位点选择
             break;
         case '2':
             //随机模式
             mode_select = 2;
-            strcpy(current_random_positions, cmd->positions); // 更新 current_positions
+            strcpy(current_random_positions, cmd->positions);           // 更新 current_random_positions
             break;
         case '3':
             // 水平模式
-            // 处理水平模式的位点选择
+            mode_select = 3;
+            split_positions(cmd->positions,&current_pos);     //分割位置
+            currentSelectPosition1 = Fixed_chose(current_pos.positions1);        // 假设有个 Fixed_chose 函数处理位点选择
+            currentSelectPosition2 = Fixed_chose(current_pos.positions2);
             break;
-            // 其他模式逻辑...
+        case '4':
+            // 垂直模式
+            mode_select = 4;
+            split_positions(cmd->positions,&current_pos);     //分割位置
+            currentSelectPosition1 = Fixed_chose(current_pos.positions1);        // 假设有个 Fixed_chose 函数处理位点选择
+            currentSelectPosition2 = Fixed_chose(current_pos.positions2);
+            break;
+        case '5':
+            // 交叉模式
+            mode_select = 5;
+            split_positions(cmd->positions,&current_pos);     //分割位置
+            currentSelectPosition1 = Fixed_chose(current_pos.positions1);        // 假设有个 Fixed_chose 函数处理位点选择
+            currentSelectPosition2 = Fixed_chose(current_pos.positions2);
+            break;
+        case '6':
+            // 自定义模式
+            mode_select = 6;
+            split_positions(cmd->positions,&current_pos);     //分割位置
+            currentSelectPosition1 = Fixed_chose(current_pos.positions1);        // 假设有个 Fixed_chose 函数处理位点选择
+            currentSelectPosition2 = Fixed_chose(current_pos.positions2);
+            currentSelectPosition3 = Fixed_chose(current_pos.positions3);
+            currentSelectPosition4 = Fixed_chose(current_pos.positions4);
+            currentSelectPosition5 = Fixed_chose(current_pos.positions5);
+            break;
     }
+
     // 设置循环次数
     if (cmd->current_repeat_count > 0)
     {
@@ -636,6 +683,64 @@ void execute_command(const Command* cmd)
         repeat_flag = 1;
     }
     new_data_flag = 1;                  // 设置新数据标志位，表示更新数据
+}
+
+// 分割位置函数
+void split_positions(const char* source, CurrentPosition* pos)
+{
+    // 获取源字符串的长度
+    int length = strlen(source);
+
+    // 分割字符串并存储到结构体的相应字段
+    if (length >= 2)
+    {
+        strncpy(pos->positions1, source, 2);
+        pos->positions1[2] = '\0';  // 确保字符串以 null 结尾
+    }
+    else
+    {
+        pos->positions1[0] = '\0';
+    }
+
+    if (length >= 4)
+    {
+        strncpy(pos->positions2, source + 2, 2);
+        pos->positions2[2] = '\0';  // 确保字符串以 null 结尾
+    }
+    else
+    {
+        pos->positions2[0] = '\0';
+    }
+
+    if (length >= 6)
+    {
+        strncpy(pos->positions3, source + 4, 2);
+        pos->positions3[2] = '\0';  // 确保字符串以 null 结尾
+    }
+    else
+    {
+        pos->positions3[0] = '\0';
+    }
+
+    if (length >= 8)
+    {
+        strncpy(pos->positions4, source + 6, 2);
+        pos->positions4[2] = '\0';  // 确保字符串以 null 结尾
+    }
+    else
+    {
+        pos->positions4[0] = '\0';
+    }
+
+    if (length >= 10)
+    {
+        strncpy(pos->positions5, source + 8, 2);
+        pos->positions5[2] = '\0';  // 确保字符串以 null 结尾
+    }
+    else
+    {
+        pos->positions5[0] = '\0';
+    }
 }
 
 int Fixed_chose(char *positions)       //根据positions的判断，返回对应的值，作为数组的信号，确定对应的点位
@@ -753,9 +858,9 @@ void random_chose(char *positions)          //根据positions的判断，返回�
     int index;
     if (strcmp(positions, "AA") == 0)
     {
-        srand(HAL_GetTick()); // 初始化随机数发生器
-        index = generate_random_all_position(); // 获取随机位置索引
-        selected_random_position = all_positions[index]; // 获取选定的位置数据
+        srand(HAL_GetTick());                                   // 初始化随机数发生器
+        index = generate_random_all_position();                      // 获取随机位置索引
+        selected_random_position = all_positions[index];            // 获取选定的位置数据
     }
     else if (strcmp(positions, "BB") == 0)
     {
@@ -771,42 +876,126 @@ void random_chose(char *positions)          //根据positions的判断，返回�
     }
 }
 
+int generate_random_freq_data()
+{
+    // 定义最小值和最大值
+    int min_value = 3100;
+    int max_value = 5000;
+    int interval = 100;
+
+    // 计算可能的值的数量
+    int num_values = (max_value - min_value) / interval + 1;
+
+    // 生成随机索引
+    int random_index = rand() % num_values;
+
+    // 计算随机值
+    int random_value = min_value + random_index * interval;
+
+    return random_value;
+}
+
 int freq_chose(const char *speed_str)
 {
     if (strcmp(speed_str, "01")== 0)
     {
-        return 3500;
+        return 3100;
     }
     if (strcmp(speed_str, "02")== 0)
     {
-        return 4000;
+        return 3200;
     }
     if (strcmp(speed_str, "03")== 0)
     {
-        return 4500;
+        return 3300;
     }
     if (strcmp(speed_str, "04")== 0)
     {
-        return 5000;
+        return 3400;
     }
     if (strcmp(speed_str, "05")== 0)
     {
-        return 5500;
+        return 3500;
+    }
+    if (strcmp(speed_str, "06")== 0)
+    {
+        return 3600;
+    }
+    if (strcmp(speed_str, "07")== 0)
+    {
+        return 3700;
+    }
+    if (strcmp(speed_str, "08")== 0)
+    {
+        return 3800;
+    }
+    if (strcmp(speed_str, "09")== 0)
+    {
+        return 3900;
+    }
+    if (strcmp(speed_str, "10")== 0)
+    {
+        return 4000;
+    }
+    if (strcmp(speed_str, "11")== 0)
+    {
+        return 4100;
+    }
+    if (strcmp(speed_str, "12")== 0)
+    {
+        return 4200;
+    }
+    if (strcmp(speed_str, "13")== 0)
+    {
+        return 4300;
+    }
+    if (strcmp(speed_str, "14")== 0)
+    {
+        return 4400;
+    }
+    if (strcmp(speed_str, "15")== 0)
+    {
+        return 4500;
+    }
+    if (strcmp(speed_str, "16")== 0)
+    {
+        return 4600;
+    }
+    if (strcmp(speed_str, "17")== 0)
+    {
+        return 4700;
+    }
+    if (strcmp(speed_str, "18")== 0)
+    {
+        return 4800;
+    }
+    if (strcmp(speed_str, "19")== 0)
+    {
+        return 4900;
+    }
+    if (strcmp(speed_str, "20")== 0)
+    {
+        return 5000;
+    }
+    if (strcmp(speed_str, "99")== 0)
+    {
+        return generate_random_freq_data();
     }
     return -1;  // 默认值，如果未匹配任何已知速度
 }
 
 void motor1_motor2_motor3_motor4_control(Position selected_position)
 {
-    set_pid_target3(&pid3, selected_position.vertical);
-//                set_pid_target4(&pid4, selected_position.horizontal);
-//                set_motor1_enable();
-//                set_motor1_direction(MOTOR_FWD);
-//                set_motor1_speed(selected_position.M1speed);
-//
-//                set_motor2_enable();
-//                set_motor2_direction(MOTOR_REV);
-//                set_motor2_speed(selected_position.M2speed);
+    set_pid_target3(&pid3, selected_position.horizontal);
+    set_pid_target4(&pid4, selected_position.vertical);
+
+    set_motor1_enable();
+    set_motor1_direction(MOTOR_FWD);
+    set_motor1_speed(selected_position.M1speed);
+
+    set_motor2_enable();
+    set_motor2_direction(MOTOR_REV);
+    set_motor2_speed(selected_position.M2speed);
 }
 
 void Fixed_control(void)
@@ -824,7 +1013,6 @@ void Fixed_control(void)
             break;
 
         case 1:
-            LED3_TOGGLE
             // 等待一段时间以确保发球机移动到位
             if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
             {
@@ -836,6 +1024,7 @@ void Fixed_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 400)
             {
+                HAL_Delay(200);
                 set_motor5_disable();                // 关闭电机5
                 sensor_triggered = 1;
                 // 处理重复次数
@@ -865,7 +1054,7 @@ void random_control(void)
             break;
 
         case 1:
-            if (HAL_GetTick() - last_tick >= 3000)                  // 等待电机转动
+            if (HAL_GetTick() - last_tick >= 1000)                  // 等待电机转动
             {
                 random_state = 2;
             }
@@ -875,17 +1064,350 @@ void random_control(void)
             if (Dropping_adc_mean < 400)
             {
                 // 关闭电机5
+                HAL_Delay(200);
                 set_motor5_disable();
                 sensor_triggered = 1;
-
-                // 处理重复次数
-//                if (motor5_current_count  > 0)
-//                {
-//                    motor5_current_count--; // 减少当前循环次数
-                    random_state = 0;  // 重置状态机
-//                }
+                random_state = 0;  // 重置状态机
             }
             break;
+    }
+}
+
+void horizontal_control(void)
+{
+    static uint32_t last_tick = 0;
+    static Position selected_position1;
+    static Position selected_position2;
+    switch (horizontal_state)
+    {
+        case 0:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position1 = all_positions[currentSelectPosition1];
+            motor1_motor2_motor3_motor4_control(selected_position1);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            horizontal_state = 1;
+            break;
+
+        case 1:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                horizontal_state = 2;
+            }
+            break;
+
+        case 2:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_first_triggered = 1;
+                horizontal_state = 3;
+            }
+            break;
+
+        case 3:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position2 = all_positions[currentSelectPosition2];
+            motor1_motor2_motor3_motor4_control(selected_position2);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            horizontal_state = 4;
+            break;
+
+        case 4:
+            LED3_TOGGLE
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                horizontal_state = 5;
+            }
+            break;
+
+        case 5:
+            // 检测Dropping_adc_mean以判断球是否落下
+            LED5_TOGGLE
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_triggered = 1;
+                horizontal_state = 0;  // 重置状态机
+            }
+            break;
+    }
+}
+
+void vertical_control(void)
+{
+    static uint32_t last_tick = 0;
+    static Position selected_position1;
+    static Position selected_position2;
+    switch (vertical_state)
+    {
+        case 0:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position1 = all_positions[currentSelectPosition1];
+            motor1_motor2_motor3_motor4_control(selected_position1);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            vertical_state = 1;
+            break;
+
+        case 1:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                vertical_state = 2;
+            }
+            break;
+
+        case 2:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_first_triggered = 1;
+                vertical_state = 3;
+            }
+            break;
+
+        case 3:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position2 = all_positions[currentSelectPosition2];
+            motor1_motor2_motor3_motor4_control(selected_position2);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            vertical_state = 4;
+            break;
+
+        case 4:
+        LED3_TOGGLE
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                vertical_state = 5;
+            }
+            break;
+
+        case 5:
+            // 检测Dropping_adc_mean以判断球是否落下
+        LED5_TOGGLE
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_triggered = 1;
+                vertical_state = 0;  // 重置状态机
+            }
+            break;
+    }
+}
+
+void cross_control(void)
+{
+    static uint32_t last_tick = 0;
+    static Position selected_position1;
+    static Position selected_position2;
+    switch (cross_state)
+    {
+        case 0:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position1 = all_positions[currentSelectPosition1];
+            motor1_motor2_motor3_motor4_control(selected_position1);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            cross_state = 1;
+            break;
+
+        case 1:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                cross_state = 2;
+            }
+            break;
+
+        case 2:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_first_triggered = 1;
+                cross_state = 3;
+            }
+            break;
+
+        case 3:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position2 = all_positions[currentSelectPosition2];
+            motor1_motor2_motor3_motor4_control(selected_position2);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            cross_state = 4;
+            break;
+
+        case 4:
+        LED3_TOGGLE
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                cross_state = 5;
+            }
+            break;
+
+        case 5:
+            // 检测Dropping_adc_mean以判断球是否落下
+        LED5_TOGGLE
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_triggered = 1;
+                cross_state = 0;  // 重置状态机
+            }
+            break;
+    }
+}
+
+void custom_control(void)
+{
+    static uint32_t last_tick = 0;
+    static Position selected_position1;
+    static Position selected_position2;
+    static Position selected_position3;
+    static Position selected_position4;
+    static Position selected_position5;
+    switch (custom_state)
+    {
+        //自定义模式第一个点位
+        case 0:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position1 = all_positions[currentSelectPosition1];
+            motor1_motor2_motor3_motor4_control(selected_position1);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            custom_state = 1;
+            break;
+        case 1:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                custom_state = 2;
+            }
+            break;
+        case 2:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_first_triggered = 1;
+                custom_state = 3;
+            }
+            break;
+
+        //自定义模式第二个点位
+        case 3:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position2 = all_positions[currentSelectPosition2];
+            motor1_motor2_motor3_motor4_control(selected_position2);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            custom_state = 4;
+            break;
+        case 4:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                custom_state = 5;
+            }
+            break;
+        case 5:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_second_triggered = 1;
+                custom_state = 6;
+            }
+            break;
+
+        //自定义模式第三个点位
+        case 6:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position3 = all_positions[currentSelectPosition3];
+            motor1_motor2_motor3_motor4_control(selected_position3);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            custom_state = 7;
+            break;
+        case 7:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                custom_state = 8;
+            }
+            break;
+        case 8:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_third_triggered = 1;
+                custom_state = 9;
+            }
+            break;
+
+        //自定义模式第四个点位
+        case 9:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position4 = all_positions[currentSelectPosition4];
+            motor1_motor2_motor3_motor4_control(selected_position4);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            custom_state = 10;
+            break;
+        case 10:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                custom_state = 11;
+            }
+            break;
+        case 11:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_forth_triggered = 1;
+                custom_state = 12;
+            }
+            break;
+
+        //自定义模式第五个点位
+        case 12:
+            // 初始化并启动 M1、M2、M3、M4
+            selected_position5 = all_positions[currentSelectPosition5];
+            motor1_motor2_motor3_motor4_control(selected_position5);
+            last_tick = HAL_GetTick();  // 获取当前时间戳
+            custom_state = 13;
+            break;
+        case 13:
+            // 等待一段时间以确保发球机移动到位
+            if (HAL_GetTick() - last_tick >= 1000)  // 例如等待1000ms
+            {
+                custom_state = 14;
+            }
+            break;
+        case 14:
+            // 检测Dropping_adc_mean以判断球是否落下
+            if (Dropping_adc_mean < 500)
+            {
+                HAL_Delay(200);
+                set_motor5_disable();                // 关闭电机5
+                sensor_triggered = 1;
+                custom_state = 0;  // 重置状态机
+            }
+            break;
+
     }
 }
 
@@ -898,12 +1420,17 @@ void repeat_function(void)
         repeat_state = REPEAT_IDLE;                 //重置状态机
         fixed_control_state = 0;                    //重置Fixed_control状态机
         random_state = 0;                           //重置random_control状态机
+        horizontal_state = 0;                       //重置horizontal_control状态机
+        vertical_state = 0;                         //重置vertical_control状态机
+        cross_state = 0;                            //重置cross_control状态机
+        custom_state = 0;                           //重置custom_control状态机
         loop_count = 1;                             //初始化重复计数器
         new_data_flag = 0;                          //清除新数据标志位
     }
     switch (repeat_state)
     {
         case REPEAT_IDLE:
+            repeat_count_comparison_value = currentSelectrepeat_count;      //传递需要循环的次数
             repeat_state = REPEAT_RUNNING;          //准备进入下一状态
             break;
 
@@ -912,7 +1439,6 @@ void repeat_function(void)
             break;
 
         case REPEAT_WAITING_SENSOR:
-            repeat_count_comparison_value = currentSelectrepeat_count;      //传递需要循环的次数
             switch (mode_select)
             {
                 case 1:
@@ -921,12 +1447,48 @@ void repeat_function(void)
                 case 2:
                     random_control();           //随机模式
                     break;
+                case 3:
+                    horizontal_control();       //水平模式
+                    break;
+                case 4:
+                    vertical_control();         //垂直模式
+                    break;
+                case 5:
+                    cross_control();            //交叉模式
+                    break;
+                case 6:
+                    custom_control();           //自定义模式
+                    break;
             }
             if (M5_done == 1)
             {
                 M5_done = 0;
-                HAL_Delay(3000);
+                HAL_Delay(4000);
                 set_motor5_enable();
+            }
+            if(sensor_first_triggered == 1)
+            {
+                sensor_first_triggered = 0;
+                M5_done = 1;
+                repeat_state = REPEAT_RUNNING;                          //未达到返回上一状态再循环
+            }
+            if(sensor_second_triggered == 1)
+            {
+                sensor_second_triggered = 0;
+                M5_done = 1;
+                repeat_state = REPEAT_RUNNING;                          //未达到返回上一状态再循环
+            }
+            if(sensor_third_triggered == 1)
+            {
+                sensor_third_triggered = 0;
+                M5_done = 1;
+                repeat_state = REPEAT_RUNNING;                          //未达到返回上一状态再循环
+            }
+            if(sensor_forth_triggered == 1)
+            {
+                sensor_forth_triggered = 0;
+                M5_done = 1;
+                repeat_state = REPEAT_RUNNING;                          //未达到返回上一状态再循环
             }
             if (sensor_triggered == 1)                                      //表示传感器已经触发
             {
@@ -959,13 +1521,11 @@ void motor_reset(void)
 
 void motor5_control(void)
 {
-    LED5_TOGGLE
-//    motor5_current_count = currentSelectrepeat_count;
-    if (!is_motor5_en) // 当 is_motor5_en 为 0（假）时，这里的代码将会执行
+    if (!is_motor5_en)                                  // 当 is_motor5_en 为 0（假）时，这里的代码将会执行
     {
         set_motor5_direction(MOTOR_REV);
         set_motor5_speed(currentSelectmotor5_speed);
-        set_motor5_enable(); // 启用电机
+        set_motor5_enable();                            // 启用电机
     }
     else
     {
