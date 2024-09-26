@@ -95,7 +95,7 @@ void Key_control(void)
     /* 扫描KEY1 */
     if( Key_Scan(KEY1_GPIO_PORT, KEY1_PIN) == KEY_ON)
     {
-        LED3_TOGGLE
+        LED1_TOGGLE
         if(speedflag == 1)
         {
             speedflag = 0;
@@ -107,12 +107,11 @@ void Key_control(void)
             speedflag = 1;
             set_motor1_enable();                            //A2
             set_motor1_direction(MOTOR_FWD);
-            set_motor1_speed(0);
+            set_motor1_speed(2000);
             set_motor2_enable();                            //A2
             set_motor2_direction(MOTOR_REV);
-            set_motor2_speed(0);
+            set_motor2_speed(2000);
         }
-
     }
 
     /* 扫描KEY2 */
@@ -126,6 +125,8 @@ void Key_control(void)
         else
         {
             Pid3flag = 1;
+            set_pid_target3(&pid3, 900);
+
         }
     }
 
@@ -139,6 +140,7 @@ void Key_control(void)
         else
         {
             Pid4flag = 1;
+            set_pid_target4(&pid4, 1400);
         }
         LED3_TOGGLE
     }
@@ -147,18 +149,8 @@ void Key_control(void)
     if( Key_Scan(KEY4_GPIO_PORT, KEY4_PIN) == KEY_ON)
     {
         LED4_TOGGLE
-        char* redata1;       //定义读数据的指针
-        uint16_t len;       //定义数据大小
-        if (IS_BLE_CONNECTED()) // 判断INT引脚电平是否发生变化
-        {
-            BLE_WAKEUP_LOW;        //蓝牙wakeup引脚置0，启动蓝牙
-            /*获取数据*/
-            redata1 = get_rebuff(&len);        //把蓝牙数据读取到redata
-            // 解析命令
-            parse_command(redata1);
-            // 处理数据后，清空接收蓝牙模块数据的缓冲区
-            clean_rebuff();
-        }
+        set_pid_target3(&pid3, 1800);
+        set_pid_target4(&pid4, 700);
     }
 
     /* 扫描KEY5 */
@@ -168,7 +160,7 @@ void Key_control(void)
         {
             set_motor5_enable();
             set_motor5_direction(MOTOR_FWD);
-            set_motor5_speed(3000);
+            set_motor5_speed(4000);
         }
         else
         {

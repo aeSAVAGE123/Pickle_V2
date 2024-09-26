@@ -84,42 +84,42 @@ int motor5_current_count = 0;
 //随机模式数组
 Position all_positions[25] =
         {
-                {1100,2500,1600,1600},{1100,2250,1800,1800}, {1100,2100,2050,2050},{1100,2100,2150,2150},{1100,1920,2270,2270},//A1-E1
+                {1100,900,1840,1840},{1100,1000,1900,1900},{1100,1000,2000,2000},{1100,1200,2150,2150},{1100, 800,2270,2270},//A1-E1
 
-                {1100,1900,1600,1600},{1100, 1900,1800,1800},{1100,1750,2050,2050},{1100,1780,2150,2150},{1100,1720,2270,2270},//A2-E2
+                {1100, 1290,1800,1800}, {1100,1290,1900,1900}, {1100, 1200,2000,2000}, {1100, 1300,2150,2150}, {1100, 1230,2270,2270},//A2-E2
 
-                {1100,1738,1550,1550},{1100, 1591,1800,1800},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
+                {1100,1600,1800,1800},{1100, 1600,1900,1900},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270},//A3-E3
 
-                {1100, 1290,1550,1550}, {1100,745,1800,1800}, {1100, 1200,2000,2000}, {1100, 1300,2150,2150}, {1100, 1230,2270,2270},//A4-E4
+                {1100,1900,1800,1800},{1100, 1900,1900,1900},{1100,1750,2000,2000},{1100,1780,2150,2150},{1100,1720,2270,2270},//A4-E4
 
-                {1100,800,1550,1550},{1100,789,1800,1800},{1100,1000,2000,2000},{1100,1200,2150,2150},{1100, 800,2270,2270}//A5-E5
+                {1100,2650,1825,1825},{1100,2250,1925,1925}, {1100,2100,2000,2000},{1100,2100,2150,2150},{1100,1920,2270,2270}//A5-E5
 
         };
 Position right_positions[15] =
         {
-                {1100,2500,1600,1600},{1100,2250,1800,1800}, {1100,2100,2050,2050},{1100,2100,2150,2150},{1100,1920,2270,2270},//A1-E1
+                {1100,900,1840,1840},{1100,1000,1900,1900},{1100,1000,2000,2000},{1100,1200,2150,2150},{1100, 800,2270,2270},//A1-E1
 
-                {1100,1900,1600,1600},{1100, 1900,1800,1800},{1100,1750,2050,2050},{1100,1780,2150,2150},{1100,1720,2270,2270},//A2-E2
+                {1100, 1290,1800,1800}, {1100,1290,1900,1900}, {1100, 1200,2000,2000}, {1100, 1300,2150,2150}, {1100, 1230,2270,2270},//A2-E2
 
-                {1100,1738,1550,1550},{1100, 1591,1800,1800},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
+                {1100,1600,1800,1800},{1100, 1600,1900,1900},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
         };
 
 Position left_positions[15] =
         {
-                {1100,1738,1550,1550},{1100, 1591,1800,1800},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
+                {1100,1600,1800,1800},{1100, 1600,1900,1900},{1100, 1580,2000,2000},{1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //A3-E3
 
-                {1100, 1290,1550,1550}, {1100,745,1800,1800}, {1100, 1200,2000,2000}, {1100, 1300,2150,2150}, {1100, 1230,2270,2270},//A4-E4
+                {1100,1900,1800,1800},{1100, 1900,1900,1900},{1100,1750,2000,2000},{1100,1780,2150,2150},{1100,1720,2270,2270},//A4-E4
 
-                {1100,800,1550,1550},{1100,789,1800,1800},{1100,1000,2000,2000},{1100,1200,2150,2150},{1100, 800,2270,2270}//A5-E5
+                {1100,2650,1825,1825},{1100,2250,1925,1925}, {1100,2100,2000,2000},{1100,2100,2150,2150},{1100,1920,2270,2270}//A5-E5
         };
 //接发球模式数组
 Position receive_right_positions[6] =
         {
-                {1100, 2100, 2150, 2150},{1100, 1920, 2270, 2270},//D1-E1
+                {1100,1200,2150,2150},{1100, 800,2270,2270},//D1-E1
 
-                {1100, 1780, 2150, 2150},{1100, 1720, 2270, 2270},//D2-E2
+                {1100, 1300,2150,2150}, {1100, 1230,2270,2270},//D2-E2
 
-                {1100, 1530, 2150, 2150},{1100, 1560, 2270, 2270}, //D3-E3
+                {1100, 1530,2150,2150}, {1100, 1560,2270,2270},//D3-E3
 
         };
 
@@ -128,36 +128,36 @@ Position receive_left_positions[6] =
 
                 {1100, 1530,2150,2150}, {1100, 1560,2270,2270}, //D3-E3
 
-                {1100, 1300,2150,2150}, {1100, 1230,2270,2270},//D4-E4
+                {1100,1780,2150,2150},{1100,1720,2270,2270},//D4-E4
 
-                {1100,1200,2150,2150},{1100, 800,2270,2270}//D5-E5
+                {1100,2100,2150,2150},{1100,1920,2270,2270}//D5-E5
         };
 //高吊球模式数组
 Position lob_all_positions[5] =
         {
-                {1100,1920,2270,2270}, {1100,1720,2270,2270}, {1100, 1560,2270,2270}, {1100, 1230,2270,2270}, {1100, 800,2270,2270}//E1-E5
+                 {1100, 800,2270,2270},{1100, 1230,2270,2270},{1100, 1560,2270,2270},{1100,1720,2270,2270},{1100,1920,2270,2270}, //E1-E5
         };
 Position lob_right_positions[3] =
         {
-                {1100,1920,2270,2270}, {1100,1720,2270,2270}, {1100, 1560,2270,2270},//E1-E3
+                {1100, 800,2270,2270},{1100, 1230,2270,2270},{1100, 1560,2270,2270},//E1-E3
         };
 
 Position lob_left_positions[3] =
         {
-                {1100, 1560,2270,2270}, {1100, 1230,2270,2270}, {1100, 800,2270,2270}//E3-E5
+                {1100, 1560,2270,2270},{1100,1720,2270,2270},{1100,1920,2270,2270}, //E3-E5
         };
 //扣杀球模式数组
 Position smash_all_positions[5] =
         {
-                {1100,2100,2050,2050},{1100,1750,2050,2050},{1100, 1580,2000,2000},{1100, 1200,2000,2000},{1100,1000,2000,2000},//C1-C5
+                {1100, 1200,2000,2000},{1100, 1580,2000,2000},{1100,1000,2000,2000},{1100,1750,2050,2050},{1100,2100,2050,2050},//C1-C5
         };
 Position smash_right_positions[3] =
         {
-                {1100,2100,2050,2050},{1100,1750,2050,2050},{1100, 1580,2000,2000},//C1-C3
+                {1100, 1200,2000,2000},{1100, 1580,2000,2000},{1100,1000,2000,2000},//C1-C3
         };
 Position smash_left_positions[3] =
         {
-                {1100, 1580,2000,2000},{1100, 1200,2000,2000},{1100,1000,2000,2000},//C3-C5
+                {1100,1000,2000,2000},{1100,1750,2050,2050},{1100,2100,2050,2050},//C3-C5
         };
 
 // 随机模式中函数来生成指定范围内的随机数
@@ -623,14 +623,16 @@ void motor4_pid_control(void)
         set_motor4_speed(temp_val);                                                                     	    // 设置 PWM 占空比
     }
 }
-
+_Bool first = 0;
+_Bool second = 1;
 void BLE_control(void)
 {
     char* redata;       //定义读数据的指针
     uint16_t len;       //定义数据大小
-
-    if (IS_BLE_CONNECTED())                 //判断INT引脚电平是否发生变化
+//    HAL_Delay(1);
+    if (IS_BLE_CONNECTED() && first)                 //判断INT引脚电平是否发生变化
     {
+
         HAL_Delay(5);
         BLE_WAKEUP_LOW;                     //蓝牙wakeup引脚置0，启动蓝牙
         uint16_t linelen;                   //定义数据的长度
@@ -638,13 +640,15 @@ void BLE_control(void)
         redata = get_rebuff(&len);        //把蓝牙数据读取到redata
         linelen = get_line(linebuff, redata, len);  //计算接收到的数据的长度
         /*检查数据是否有更新*/
-        if (linelen < 50 && linelen != 0)
+        if (linelen < 1000 && linelen != 0 || second)
         {
+            second = 0;
             parse_command(redata);            // 解析命令
 
             clean_rebuff();                     // 处理数据后，清空接收蓝牙模块数据的缓冲区
         }
     }
+    first = 1;
 }
 
 void parse_command(const char* data)  //把接收到的蓝牙数据进行解析
@@ -653,9 +657,12 @@ void parse_command(const char* data)  //把接收到的蓝牙数据进行解析
     strncpy(temp_data, data, sizeof(temp_data) - 1);
     temp_data[sizeof(temp_data) - 1] = '\0';            // 确保字符串以 '\0' 结尾
 
+
+
     if(strcmp(temp_data, "8") == 0)
     {
         motor5_control();
+        LED5_TOGGLE
     }
     else if(strcmp(temp_data, "9") == 0)
     {
@@ -1182,6 +1189,7 @@ void Fixed_control(void)
     {
         case 0:
             // 初始化并启动 M1、M2、M3、M4
+            LED3_TOGGLE
             selected_position = all_positions[currentSelectPosition];
             motor1_motor2_motor3_motor4_control(selected_position);
             last_tick = HAL_GetTick();  // 获取当前时间戳
@@ -1200,7 +1208,7 @@ void Fixed_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 400)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_triggered = 1;
                 // 处理重复次数
@@ -1240,7 +1248,7 @@ void random_control(void)
             if (Dropping_adc_mean < 400)
             {
                 // 关闭电机5
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();
                 sensor_triggered = 1;
                 random_state = 0;  // 重置状态机
@@ -1276,7 +1284,7 @@ void horizontal_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_first_triggered = 1;
                 horizontal_state = 3;
@@ -1302,10 +1310,10 @@ void horizontal_control(void)
 
         case 5:
             // 检测Dropping_adc_mean以判断球是否落下
-            LED5_TOGGLE
+//            LED5_TOGGLE
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_triggered = 1;
                 horizontal_state = 0;  // 重置状态机
@@ -1341,7 +1349,7 @@ void vertical_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_first_triggered = 1;
                 vertical_state = 3;
@@ -1367,10 +1375,10 @@ void vertical_control(void)
 
         case 5:
             // 检测Dropping_adc_mean以判断球是否落下
-        LED5_TOGGLE
+//        LED5_TOGGLE
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_triggered = 1;
                 vertical_state = 0;  // 重置状态机
@@ -1406,7 +1414,7 @@ void cross_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_first_triggered = 1;
                 cross_state = 3;
@@ -1432,10 +1440,10 @@ void cross_control(void)
 
         case 5:
             // 检测Dropping_adc_mean以判断球是否落下
-        LED5_TOGGLE
+//        LED5_TOGGLE
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_triggered = 1;
                 cross_state = 0;  // 重置状态机
@@ -1473,7 +1481,7 @@ void custom_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_first_triggered = 1;
                 custom_state = 3;
@@ -1499,7 +1507,7 @@ void custom_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_second_triggered = 1;
                 custom_state = 6;
@@ -1525,7 +1533,7 @@ void custom_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_third_triggered = 1;
                 custom_state = 9;
@@ -1551,7 +1559,7 @@ void custom_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_forth_triggered = 1;
                 custom_state = 12;
@@ -1577,7 +1585,7 @@ void custom_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 500)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_triggered = 1;
                 custom_state = 0;  // 重置状态机
@@ -1610,7 +1618,7 @@ void receive_control(void)
             if (Dropping_adc_mean < 400)
             {
                 // 关闭电机5
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();
                 sensor_triggered = 1;
                 // 处理重复次数
@@ -1632,6 +1640,7 @@ void drop_shot_control(void)
     {
         case 0:
             // 初始化并启动 M1、M2、M3、M4
+        LED3_TOGGLE
             selected_position = all_positions[currentSelectPosition];
             motor1_motor2_motor3_motor4_control(selected_position);
             last_tick = HAL_GetTick();  // 获取当前时间戳
@@ -1650,7 +1659,7 @@ void drop_shot_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 400)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_triggered = 1;
                 // 处理重复次数
@@ -1675,6 +1684,7 @@ void volley_control(void)
     {
         case 0:
             // 初始化并启动 M1、M2、M3、M4
+        LED3_TOGGLE
             selected_position = all_positions[currentSelectPosition];
             motor1_motor2_motor3_motor4_control(selected_position);
             last_tick = HAL_GetTick();  // 获取当前时间戳
@@ -1693,7 +1703,7 @@ void volley_control(void)
             // 检测Dropping_adc_mean以判断球是否落下
             if (Dropping_adc_mean < 400)
             {
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();                // 关闭电机5
                 sensor_triggered = 1;
                 // 处理重复次数
@@ -1716,6 +1726,7 @@ void lob_control(void)
     switch (lob_state)
     {
         case 0:
+        LED3_TOGGLE
             lob_chose(current_lob_positions);
             motor1_motor2_motor3_motor4_control(selected_lob_position);
             last_tick = HAL_GetTick();  // 获取当前时间戳
@@ -1733,7 +1744,7 @@ void lob_control(void)
             if (Dropping_adc_mean < 400)
             {
                 // 关闭电机5
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();
                 sensor_triggered = 1;
 
@@ -1754,6 +1765,7 @@ void smash_control(void)
     switch (smash_state)
     {
         case 0:
+        LED3_TOGGLE
             smash_chose(current_smash_positions);
             motor1_motor2_motor3_motor4_control(selected_smash_position);
             last_tick = HAL_GetTick();  // 获取当前时间戳
@@ -1771,7 +1783,7 @@ void smash_control(void)
             if (Dropping_adc_mean < 400)
             {
                 // 关闭电机5
-                HAL_Delay(200);
+                HAL_Delay(500);
                 set_motor5_disable();
                 sensor_triggered = 1;
 
@@ -1907,7 +1919,6 @@ void motor_reset(void)
 {
     if(1 == reset_flag)
     {
-        LED5_TOGGLE
         __set_FAULTMASK(1);
         NVIC_SystemReset();
     }

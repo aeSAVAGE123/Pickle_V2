@@ -19,9 +19,11 @@ void SystemClock_Config(void);
 static void MX_NVIC_Init(void);
 
 _Bool firststart;
+_Bool firstreset = 0;
 _Bool speedflag = 0;
 _Bool Pid3flag = 0;
 _Bool Pid4flag = 0;
+//_Bool first = 0;
 
 
 _Bool all_random_flag = 0;
@@ -44,6 +46,7 @@ uint16_t freq_flag = 0;
 int main(void)
 {
     firststart = 0;
+
     HAL_Init();
     /** 初始化系统时钟为72MHz */
     SystemClock_Config();
@@ -63,10 +66,8 @@ int main(void)
     USART_Config();
     MX_NVIC_Init();
 
-
     set_p_i_d(&pid3, 25, 0.18, 0.0);
     set_p_i_d(&pid4, 25.0,0.19, 0.0);//增量式
-
 
     /** 对上、下电机进行归零操作 */
     pid3.actual_val = positiondown_adc_mean;
@@ -84,6 +85,11 @@ int main(void)
         Knob_control();
         BLE_control();
         repeat_function();
+        if (Dropping_adc_mean < 400)
+        {
+            HAL_Delay(500);
+            set_motor5_disable();                // 关闭电机5
+        }
     }
 }
 

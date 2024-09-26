@@ -349,7 +349,7 @@ int8_t receiving_process(void)
 
                 case TurnLeft_CMD:
                 {
-                    LED5_TOGGLE
+//                    LED5_TOGGLE
                     set_motor3_direction(MOTOR_REV);
                     /** 处理完一帧数据后将rd_p移到下一个数据帧开头 */
                     rd_p = (rd_p + 11) % max_length;
@@ -367,7 +367,7 @@ int8_t receiving_process(void)
 
                 case TurnRight_CMD:
                 {
-                    LED5_TOGGLE
+//                    LED5_TOGGLE
                     set_motor3_direction(MOTOR_FWD);
                     /** 处理完一帧数据后将rd_p移到下一个数据帧开头 */
                     rd_p = (rd_p + 11) % max_length;

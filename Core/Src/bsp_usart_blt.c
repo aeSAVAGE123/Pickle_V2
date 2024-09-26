@@ -22,6 +22,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "bsp_hc05.h"
+#include "bsp_led.h"
 
 UART_HandleTypeDef UART_InitStructure;
 extern ReceiveData BLE_USART_ReceiveData;
@@ -115,6 +116,6 @@ char *get_rebuff(uint16_t *len)
 //清空缓冲区
 void clean_rebuff(void)
 {
-    memset(uart_buff2, 0, sizeof(uart_buff2));  // 清空缓冲区，将 uart_buff2 缓冲区的所有字节设置为 0
-    uart_p2 = 0;  // 重置缓冲区指针，重置这个指针意味着下一次接收的数据将从缓冲区的起始位置存储。
+    memset(uart_buff2, 0, sizeof(uart_buff2));      // 清空缓冲区，将 uart_buff2 缓冲区的所有字节设置为 0
+    uart_p2 = 0;                                    // 重置缓冲区指针，重置这个指针意味着下一次接收的数据将从缓冲区的起始位置存储。
 }
