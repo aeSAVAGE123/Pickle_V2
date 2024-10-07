@@ -303,7 +303,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         }
         else
         {
-            LED2_TOGGLE
+//            LED2_TOGGLE
             pid3_enable = 0;
             MOTOR3_FWD_DISABLE();
             MOTOR3_REV_DISABLE();

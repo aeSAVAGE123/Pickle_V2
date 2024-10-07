@@ -85,11 +85,7 @@ int main(void)
         Knob_control();
         BLE_control();
         repeat_function();
-        if (Dropping_adc_mean < 400)
-        {
-            HAL_Delay(500);
-            set_motor5_disable();                // 关闭电机5
-        }
+        clean_rebuff();
     }
 }
 
